@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'homeScreen': (_) => HomeScreen(),
         'resultScreen': (_) => ResultScreen(),
-        'infoScreen': (_) => HomeScreen(),
+        'infoScreen': (_) => InfoScreen(),
       },
     );
   }

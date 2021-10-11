@@ -58,9 +58,7 @@ class NavigationBottomBar extends StatelessWidget {
       case 1:
         return const Color.fromRGBO(20, 152, 77, 1.0);
       case 2:
-        return Colors.yellow;
-      default:
-        return const Color.fromRGBO(20, 152, 77, 1.0);
+        return Colors.yellow.shade600;
     }
   }
 }
