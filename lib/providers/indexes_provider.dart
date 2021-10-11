@@ -1,28 +1,31 @@
-import 'package:image/image.dart';
-import 'dart:io';
+import 'dart:typed_data';
 
-double getGA(String imagePath, pls) {
-  final image = decodeImage(pls);
+import 'package:image/image.dart';
+
+double getGA(Uint8List imageAsUint8) {
+  final image = decodeImage(imageAsUint8);
   final imageHue = getImageHue(image!);
   final greenAreaImage = getTresholdedImage(imageHue, min: 60.0, max: 180.0);
   final greenArea = getPercentWithinThreshold(greenAreaImage);
   return greenArea;
 }
 
-double getGGA(String imagePath, pls) {
-  final image = decodeImage(pls);
+double getGGA(Uint8List imageAsUint8) {
+  final image = decodeImage(imageAsUint8);
   final imageHue = getImageHue(image!);
   final greenerAreaImage = getTresholdedImage(imageHue, min: 80.0, max: 180.0);
   final greenerArea = getPercentWithinThreshold(greenerAreaImage);
   return greenerArea;
 }
 
-List<double> getImageHue(Image image) {
+Float32List getImageHue(Image image) {
   final imagePixels = image.getBytes(format: Format.rgb);
-  var imageAsHue = <double>[];
+  var imageAsHue = Float32List((imagePixels.length) ~/ 3);
+  var anotherCounter = 0;
   for (var i = 0, len = imagePixels.length; i < len; i += 3) {
-    imageAsHue
-        .add(getHue(imagePixels[i], imagePixels[i + 1], imagePixels[i + 2]));
+    imageAsHue[anotherCounter] =
+        getHue(imagePixels[i], imagePixels[i + 1], imagePixels[i + 2]);
+    anotherCounter++;
   }
   return imageAsHue;
 }
@@ -47,37 +50,41 @@ double getHue(int red, int green, int blue) {
 
 int getMax(List<int> list) {
   var max = 0;
-  list.forEach((element) {
+  for (var element in list) {
     max = (element > max) ? element : max;
-  });
+  }
   return max;
 }
 
 int getMin(List<int> list) {
-  var min = 999999999999999999;
-  list.forEach((element) {
+  var min = 9999999999;
+  for (var element in list) {
     min = (element < min) ? element : min;
-  });
+  }
   return min;
 }
 
-List<int> getTresholdedImage(List<double> imageHue,
+Uint8List getTresholdedImage(Float32List imageHue,
     {required double min, required double max}) {
-  var thresholdedImage = <int>[];
-  imageHue.forEach((element) {
+  var thresholdedImage = Uint8List(imageHue.length);
+  int index = 0;
+  for (var element in imageHue) {
     (element >= min && element <= max)
-        ? thresholdedImage.add(255)
-        : thresholdedImage.add(0);
-  });
+        ? thresholdedImage[index] = 255
+        : thresholdedImage[index] = 0;
+    index++;
+  }
+
   return thresholdedImage;
 }
 
 double getPercentWithinThreshold(List<int> thresholdedImage) {
   var pixelsWithinThreshold = 0;
-  thresholdedImage.forEach((element) {
+  for (var element in thresholdedImage) {
     if (element == 255) {
       pixelsWithinThreshold++;
     }
-  });
+  }
+
   return pixelsWithinThreshold / thresholdedImage.length * 100;
 }

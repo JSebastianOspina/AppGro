@@ -2,6 +2,7 @@ import 'package:appgro/providers/indexes_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ResultScreen extends StatelessWidget {
   @override
@@ -19,7 +20,10 @@ class ResultScreen extends StatelessWidget {
               future: getIndexes(),
               builder: (context, AsyncSnapshot<List<double>> snapshot) {
                 if (!snapshot.hasData) {
-                  return CircularProgressIndicator();
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ));
                 } else {
                   final indexes = snapshot.data;
                   double gga = indexes![0];
@@ -131,16 +135,11 @@ class ResultScreen extends StatelessWidget {
 
   Future<List<double>> getIndexes() async {
     final String _fakeImagePath = 'assets/1.jpg';
-    final _imagePath = await rootBundle.load(_fakeImagePath);
-    _imagePath.buffer.asUint8List();
-    final gga = getGGA('dshd', _imagePath.buffer.asUint8List());
-    final ga = getGA('dshd', _imagePath.buffer.asUint8List());
-
-    //print(getGGA('dshd', _imagePath.buffer.asUint8List()));
-    //_imagePath.
-    //double _gga = getGGA(_imagePath);
-    //double _ga = getGA(_imagePath);
-    print('sali');
+    var list = await FlutterImageCompress.compressAssetImage(
+      _fakeImagePath,
+    );
+    final gga = getGGA(list!);
+    final ga = getGA(list);
     return [gga, ga];
   }
 }
