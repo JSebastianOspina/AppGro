@@ -1,4 +1,5 @@
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
+import 'package:appgro/widgets/screen_wrapper.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,49 +7,52 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: const NavigationBottomBar(0),
-        body: Container(
-          color: Colors.brown,
-          width: double.infinity,
-          child: Column(children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.08,
-            ),
-            const Text(
-              'Área más verde de la imagen',
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 24.0,
-                  color: Colors.white),
-            ),
-            Text(
-              '2322',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 48.0,
-                color: Colors.white,
-              ),
-            ),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                child: Container(
-                  color: Colors.white,
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (_, int index) {
-                      return ResultCard(
-                        index: index,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ]),
+        body: ScreenWrapper(
+          headerColor: Colors.brown,
+          headerWidget: HeaderText(),
+          bodyWidget: ListaTarjetas(),
         ));
+  }
+}
+
+class HeaderText extends StatelessWidget {
+  const HeaderText({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          'Imágenes analizadas',
+          style: TextStyle(
+              fontWeight: FontWeight.w500, fontSize: 24.0, color: Colors.white),
+        ),
+        Text(
+          '6',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 48.0,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ListaTarjetas extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (_, int index) {
+        return ResultCard(
+          index: index,
+        );
+      },
+    );
   }
 }
 
