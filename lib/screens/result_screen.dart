@@ -1,5 +1,6 @@
 import 'package:appgro/providers/indexes_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -21,9 +22,11 @@ class ResultScreen extends StatelessWidget {
               builder: (context, AsyncSnapshot<List<double>> snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(
-                      child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ));
+                    child: CupertinoActivityIndicator(),
+                    // child: CircularProgressIndicator(
+                    //   color: Colors.white,
+                    // ),
+                  );
                 } else {
                   final indexes = snapshot.data;
                   double gga = indexes![0];
@@ -137,6 +140,7 @@ class ResultScreen extends StatelessWidget {
     final String _fakeImagePath = 'assets/1.jpg';
     var list = await FlutterImageCompress.compressAssetImage(
       _fakeImagePath,
+      //quality: 75
     );
     final gga = getGGA(list!);
     final ga = getGA(list);
