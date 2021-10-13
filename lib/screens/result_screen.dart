@@ -1,24 +1,46 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:appgro/providers/indexes_provider.dart';
+import 'package:appgro/providers/result_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const String _imagePath = 'assets/2.jpg';
     const Color _primaryColor = Color.fromRGBO(20, 152, 77, 1.0);
+    final resultProvider = Provider.of<ResultProvider>(context, listen: false);
+
     return Scaffold(
         bottomNavigationBar: const NavigationBottomBar(1),
         body: FutureBuilder(
-            future: getIndexes(),
-            builder: (context, AsyncSnapshot<List<double>> snapshot) {
+            future: getImageFromUserCamera(context, resultProvider),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (!snapshot.hasData) {
-                return const Center(
-                  child: CupertinoActivityIndicator(),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Estamos procesando tu imagen...',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 24.0,
+                            color: Colors.grey),
+                      ),
+                      Image.asset('assets/planta.gif')
+                    ],
+                  ),
                 );
               } else {
                 final indexes = snapshot.data;
@@ -26,6 +48,7 @@ class ResultScreen extends StatelessWidget {
                 gga = double.parse(gga.toStringAsFixed(2));
                 double ga = indexes[1];
                 ga = double.parse(ga.toStringAsFixed(2));
+                final String imagePath = indexes[2];
                 return ScreenWrapper(
                   headerColor: _primaryColor,
                   headerWidget: Column(
@@ -56,10 +79,10 @@ class ResultScreen extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
-                          child: Image(
+                          child: Image.file(
+                            File(imagePath),
                             height: 280.0,
                             fit: BoxFit.cover,
-                            image: AssetImage(_imagePath),
                           ),
                         ),
                         SizedBox(
@@ -112,14 +135,21 @@ class ResultScreen extends StatelessWidget {
             }));
   }
 
-  Future<List<double>> getIndexes() async {
-    final String _fakeImagePath = 'assets/1.jpg';
-    var list = await FlutterImageCompress.compressAssetImage(
-      _fakeImagePath,
-      //quality: 75
-    );
-    final gga = getGGA(list!);
-    final ga = getGA(list);
-    return [gga, ga];
+  Future<List<dynamic>> getImageFromUserCamera(
+      context, ResultProvider resultprovider) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+    final document = await getApplicationDocumentsDirectory();
+    final Uint8List imageBytes = await photo!.readAsBytes();
+    var compressedImage =
+        await FlutterImageCompress.compressWithList(imageBytes, quality: 70);
+    final gga = await compute(getGGA, compressedImage);
+    final ga = await compute(getGA, compressedImage);
+    final String imageName = '${document.path}/${photo.name}';
+    File(imageName).writeAsBytes(compressedImage);
+
+    resultprovider.saveResult(document.path, imageName, ga, gga);
+    return [gga, ga, imageName];
+    //Guardar la información.
   }
 }

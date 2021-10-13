@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,11 @@ class InfoScreen extends StatelessWidget {
     return Scaffold(
         bottomNavigationBar: const NavigationBottomBar(2),
         body: ScreenWrapper(
-          bodyWidget: Center(child: Text('Explicación Indices')),
+          bodyWidget: Center(
+              child: Center(
+            child: Image.file(File(
+                '/data/user/0/com.example.appgro/app_flutter/fototomada.jpg')),
+          )),
           headerWidget: const HeaderTextInfoScreen(),
           headerColor: Colors.yellow.shade600,
         ));

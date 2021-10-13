@@ -1,25 +1,33 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:appgro/providers/result_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final resultProvider = Provider.of<ResultProvider>(context);
+
     return Scaffold(
         bottomNavigationBar: const NavigationBottomBar(0),
         body: ScreenWrapper(
           headerColor: Colors.brown,
-          headerWidget: HeaderText(),
-          bodyWidget: ListaTarjetas(),
+          headerWidget: HeaderText(resultProvider: resultProvider),
+          bodyWidget: ListaTarjetas(resultProvider: resultProvider),
         ));
   }
 }
 
 class HeaderText extends StatelessWidget {
-  const HeaderText({
-    Key? key,
-  }) : super(key: key);
+  final ResultProvider resultProvider;
 
+  const HeaderText({Key? key, required this.resultProvider}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,7 +38,7 @@ class HeaderText extends StatelessWidget {
               fontWeight: FontWeight.w500, fontSize: 24.0, color: Colors.white),
         ),
         Text(
-          '6',
+          '${resultProvider.results.length}',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 48.0,
@@ -43,14 +51,27 @@ class HeaderText extends StatelessWidget {
 }
 
 class ListaTarjetas extends StatelessWidget {
+  final ResultProvider resultProvider;
+
+  const ListaTarjetas({Key? key, required this.resultProvider})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    List<dynamic> results = resultProvider.results;
+
+    if (results.isEmpty) {
+      return const Center(
+        child: Text("Por favor, toma una foto"),
+      );
+    }
     return ListView.builder(
-      itemCount: 5,
+      itemCount: results.length,
       itemBuilder: (_, int index) {
         return ResultCard(
-          index: index,
-        );
+            index: index,
+            individualResult: results[index],
+            resultProvider: resultProvider);
       },
     );
   }
@@ -58,8 +79,15 @@ class ListaTarjetas extends StatelessWidget {
 
 class ResultCard extends StatelessWidget {
   final int index;
+  final Map individualResult;
+  final ResultProvider resultProvider;
 
-  const ResultCard({Key? key, required this.index}) : super(key: key);
+  const ResultCard(
+      {Key? key,
+      required this.index,
+      required this.individualResult,
+      required this.resultProvider})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,23 +103,27 @@ class ResultCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image(
+              child: Image.file(
+                File(individualResult['filePath']),
                 height: 80.0,
                 width: MediaQuery.of(context).size.width * 0.35,
                 fit: BoxFit.cover,
-                image: AssetImage('assets/1.jpg'),
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('GGA: 74.4%'),
-                Text('GA: 97.8%'),
+                Text(
+                    'GGA: ${double.parse(individualResult['gga'].toStringAsFixed(2))}%'),
+                Text(
+                    'GA: ${double.parse(individualResult['ga'].toStringAsFixed(2))}%'),
                 Text('01/27/2021 04:35 PM'),
               ],
             ),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  resultProvider.deleteResult(index);
+                },
                 icon: Icon(
                   Icons.delete,
                   color: Colors.brown[400],
