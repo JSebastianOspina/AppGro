@@ -117,7 +117,7 @@ class ResultCard extends StatelessWidget {
                     'GGA: ${double.parse(individualResult['gga'].toStringAsFixed(2))}%'),
                 Text(
                     'GA: ${double.parse(individualResult['ga'].toStringAsFixed(2))}%'),
-                Text('01/27/2021 04:35 PM'),
+                Text('${individualResult['date']}'),
               ],
             ),
             IconButton(

@@ -61,7 +61,7 @@ class ResultScreen extends StatelessWidget {
                             color: Colors.white),
                       ),
                       Text(
-                        '$gga',
+                        '$gga%',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 48.0,
@@ -111,7 +111,7 @@ class ResultScreen extends StatelessWidget {
                                 elevation: 3,
                                 child: ListTile(
                                   title: Text('GGA'),
-                                  trailing: Text('$gga'),
+                                  trailing: Text('$gga%'),
                                 ),
                               ),
                               SizedBox(
@@ -121,7 +121,7 @@ class ResultScreen extends StatelessWidget {
                                 elevation: 3,
                                 child: ListTile(
                                   title: Text('GA'),
-                                  trailing: Text('$ga'),
+                                  trailing: Text('$ga%'),
                                 ),
                               ),
                             ],
@@ -137,18 +137,23 @@ class ResultScreen extends StatelessWidget {
 
   Future<List<dynamic>> getImageFromUserCamera(
       context, ResultProvider resultprovider) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
-    final document = await getApplicationDocumentsDirectory();
-    final Uint8List imageBytes = await photo!.readAsBytes();
-    var compressedImage =
-        await FlutterImageCompress.compressWithList(imageBytes, quality: 70);
-    final gga = await compute(getGGA, compressedImage);
+    final ImagePicker _picker = ImagePicker(); //Create ImagePicker Instance
+    final XFile? photo = await _picker.pickImage(
+        source: ImageSource.gallery); //Ask to promp the user gallery
+    final document =
+        await getApplicationDocumentsDirectory(); //Get application document folder
+    final Uint8List imageBytes =
+        await photo!.readAsBytes(); //Read the taken image as bytes.
+    var compressedImage = await FlutterImageCompress.compressWithList(
+        imageBytes,
+        quality: 70); //Compress the image
+    final gga = await compute(getGGA, compressedImage); //Calculate gga and ga
     final ga = await compute(getGA, compressedImage);
-    final String imageName = '${document.path}/${photo.name}';
-    File(imageName).writeAsBytes(compressedImage);
-
-    resultprovider.saveResult(document.path, imageName, ga, gga);
+    final String imageName =
+        '${document.path}/${photo.name}'; //Get the image path
+    File(imageName).writeAsBytes(compressedImage); //Save image to user device
+    final date = DateTime.now(); //Get the actual time
+    resultprovider.saveResult(document.path, imageName, ga, gga, date);
     return [gga, ga, imageName];
     //Guardar la información.
   }

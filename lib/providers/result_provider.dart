@@ -42,11 +42,16 @@ class ResultProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveResult(path, imagePath, ga, gga) async {
+  void saveResult(path, imagePath, ga, gga, saveTime) async {
     var informationFile = File('$path/$databaseName');
     if (_results.isEmpty) {
       List<Map<String, dynamic>> jsonAsMap = [
-        {"filePath": imagePath, "gga": gga, "ga": ga}
+        {
+          "filePath": imagePath,
+          "gga": gga,
+          "ga": ga,
+          "date": getParsedDate(saveTime)
+        }
       ];
       _results = jsonAsMap;
       informationFile.writeAsString(jsonEncode(_results));
@@ -54,11 +59,22 @@ class ResultProvider extends ChangeNotifier {
       Map<String, dynamic> jsonAsMap = {
         "filePath": imagePath,
         "gga": gga,
-        "ga": ga
+        "ga": ga,
+        "date": getParsedDate(saveTime)
       };
       _results.add(jsonAsMap);
       informationFile.writeAsString(jsonEncode(_results));
     }
     notifyListeners();
+  }
+
+  String getParsedDate(DateTime saveTime) {
+    String y = '${saveTime.year}';
+    String m = '${saveTime.month}';
+    String d = '${saveTime.day}';
+    String h = '${saveTime.hour}';
+    String min = '${saveTime.minute}';
+
+    return "$y-$m-$d $h:$min";
   }
 }
