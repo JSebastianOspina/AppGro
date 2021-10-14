@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:appgro/providers/indexes_provider.dart';
 import 'package:appgro/providers/result_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
@@ -9,7 +7,6 @@ import 'package:appgro/widgets/screen_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -44,7 +41,22 @@ class ResultScreen extends StatelessWidget {
                 );
               } else {
                 final indexes = snapshot.data;
-                double gga = indexes![0];
+                if (indexes!.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Has cancelado la seleccion de imagen'),
+                        TextButton(
+                            onPressed: () =>
+                                Navigator.pushNamed(context, 'resultScreen'),
+                            child: const Text('Tomar imagen de nuevo'))
+                      ],
+                    ),
+                  );
+                }
+
+                double gga = indexes[0];
                 gga = double.parse(gga.toStringAsFixed(2));
                 double ga = indexes[1];
                 ga = double.parse(ga.toStringAsFixed(2));
@@ -140,6 +152,9 @@ class ResultScreen extends StatelessWidget {
     final ImagePicker _picker = ImagePicker(); //Create ImagePicker Instance
     final XFile? photo = await _picker.pickImage(
         source: ImageSource.gallery); //Ask to promp the user gallery
+    if (photo == null) {
+      return [];
+    }
     final document =
         await getApplicationDocumentsDirectory(); //Get application document folder
     final Uint8List imageBytes =

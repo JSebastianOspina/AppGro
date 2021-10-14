@@ -22,7 +22,7 @@ class NavigationBottomBar extends StatelessWidget {
       //fixedColor: const Color.fromRGBO(20, 152, 77, 1.0),
       selectedItemColor: getIconColor(currentIndex),
       onTap: (index) {
-        if (index == currentIndex) {
+        if (index == currentIndex && index != 1) {
           return;
         }
         String _nextPage;
