@@ -107,7 +107,7 @@ class ResultCard extends StatelessWidget {
                 File(individualResult['filePath']),
                 height: 80.0,
                 width: MediaQuery.of(context).size.width * 0.35,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
             Column(

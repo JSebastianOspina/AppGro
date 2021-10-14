@@ -50,7 +50,7 @@ class ResultProvider extends ChangeNotifier {
           "filePath": imagePath,
           "gga": gga,
           "ga": ga,
-          "date": getParsedDate(saveTime)
+          "date": getParsedDate(saveTime),
         }
       ];
       _results = jsonAsMap;
@@ -60,7 +60,7 @@ class ResultProvider extends ChangeNotifier {
         "filePath": imagePath,
         "gga": gga,
         "ga": ga,
-        "date": getParsedDate(saveTime)
+        "date": getParsedDate(saveTime),
       };
       _results.add(jsonAsMap);
       informationFile.writeAsString(jsonEncode(_results));
