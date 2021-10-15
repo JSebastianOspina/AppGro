@@ -111,11 +111,20 @@ class ResultCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image.file(
-                File(individualResult.filePath),
-                height: 80.0,
-                width: MediaQuery.of(context).size.width * 0.35,
-                fit: BoxFit.fill,
+              child: GestureDetector(
+                onTap: () {
+                  resultProvider.result = individualResult;
+                  Navigator.of(context).pushNamed('resultScreen');
+                },
+                child: Hero(
+                  tag: individualResult.filePath,
+                  child: Image.file(
+                    File(individualResult.filePath),
+                    height: 80.0,
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
             ),
             Column(

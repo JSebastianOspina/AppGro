@@ -21,6 +21,9 @@ class ResultProvider extends ChangeNotifier {
         _wasCanceled = false {
     loadResults();
   }
+  set result(Result? result) {
+    _actualResult = result;
+  }
 
   Result? get lastResult {
     return _results[_results.length - 1];

@@ -127,10 +127,13 @@ class ResultBody extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Image.file(
-                  File(imagePath),
-                  height: 280.0,
-                  fit: BoxFit.cover,
+                child: Hero(
+                  tag: imagePath,
+                  child: Image.file(
+                    File(imagePath),
+                    height: 280.0,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(
