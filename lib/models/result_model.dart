@@ -1,30 +1,20 @@
 class Result {
-  final String filepath;
+  final String filePath;
   final double gga;
   final double ga;
-  final DateTime date;
+  final String date;
   Result(
-      {required this.filepath,
+      {required this.filePath,
       required this.gga,
       required this.ga,
       required this.date});
 
   Map<String, dynamic> toMap() {
     return {
-      "filePath": filepath,
+      "filePath": filePath,
       "gga": gga,
       "ga": ga,
-      "date": getParsedDate(date),
+      "date": date,
     };
-  }
-
-  String getParsedDate(DateTime saveTime) {
-    String y = '${saveTime.year}';
-    String m = '${saveTime.month}';
-    String d = '${saveTime.day}';
-    String h = '${saveTime.hour}';
-    String min = '${saveTime.minute}';
-
-    return "$y-$m-$d $h:$min";
   }
 }

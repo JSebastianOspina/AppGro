@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:appgro/models/result_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'indexes_provider.dart';
 
 class ResultProvider extends ChangeNotifier {
-  List<dynamic> _results = [];
+  List<Result> _results = [];
   Result? _actualResult;
   bool _isLoading;
   bool _wasCanceled;
@@ -21,6 +20,10 @@ class ResultProvider extends ChangeNotifier {
       : _isLoading = false,
         _wasCanceled = false {
     loadResults();
+  }
+
+  Result? get lastResult {
+    return _results[_results.length - 1];
   }
 
   Result? get result {
@@ -77,6 +80,7 @@ class ResultProvider extends ChangeNotifier {
     final gga = await compute(getGGA, compressedImage);
     final ga = await compute(getGA, compressedImage);
     final date = DateTime.now();
+    final dateAsString = getParsedDate(date);
     //At this poing, we got all the variables we need for saving
     //and displaying the result
 
@@ -86,7 +90,7 @@ class ResultProvider extends ChangeNotifier {
     final String imageName = '$applicationPath/${_getNewImageName()}';
     //Save compressed image to user device
     File(imageName).writeAsBytes(compressedImage);
-    saveResult(applicationPath, imageName, ga, gga, date);
+    saveResult(applicationPath, imageName, ga, gga, dateAsString);
     _isLoading = false;
     _wasCanceled = false;
   }
@@ -107,8 +111,18 @@ class ResultProvider extends ChangeNotifier {
       _results = [];
     } else {
       String jsonAsString = await jsonFile.readAsString();
+      //Convert to JsonObject
+      List<dynamic> jsonAsObject = jsonDecode(jsonAsString);
+      Iterable<Result> iterableResults =
+          jsonAsObject.map((jsonResult) => Result(
+                filePath: jsonResult['filePath'],
+                gga: jsonResult['gga'],
+                ga: jsonResult['ga'],
+                date: jsonResult['date'],
+              ));
+      List<Result> resultList = iterableResults.toList();
       //Load the previus results into _result vartiable
-      _results = jsonDecode(jsonAsString) as List<dynamic>;
+      _results = resultList;
     }
     notifyListeners();
   }
@@ -117,29 +131,56 @@ class ResultProvider extends ChangeNotifier {
     _results.removeAt(index);
     final applicationPath = await getApplicationPath(); //Get application path
     var informationFile = File('$applicationPath/$databaseName'); //get jso
-    informationFile.writeAsString(jsonEncode(_results));
+    if (_results.isEmpty) {
+      informationFile.writeAsString(jsonEncode([]));
+    } else {
+      informationFile.writeAsString(
+          jsonEncode(resultListToMapList(_results as List<Result>)));
+    }
+
     notifyListeners();
   }
 
   void saveResult(path, imagePath, ga, gga, saveTime) async {
     var informationFile = File('$path/$databaseName');
     _actualResult =
-        Result(filepath: imagePath, ga: ga, gga: gga, date: saveTime);
-    final jsonAsMap = _actualResult!.toMap();
+        Result(filePath: imagePath, ga: ga, gga: gga, date: saveTime);
     if (_results.isEmpty) {
       //Create the result List with this map.
-      _results = [jsonAsMap];
+      _results = [_actualResult!];
+      //Of course, save it :)
+
+      informationFile.writeAsString(jsonEncode([]));
     } else {
       //Append the new item to the current result's list.
-      _results.add(jsonAsMap);
+      _results.add(_actualResult!);
+      //Of course, save it :)
+      informationFile.writeAsString(
+          jsonEncode(resultListToMapList(_results as List<Result>)));
     }
-    //Of course, save it :)
-    informationFile.writeAsString(jsonEncode(_results));
     notifyListeners();
+  }
+
+  List<Map<String, dynamic>> resultListToMapList(List<Result> resultList) {
+    Iterable<Map<String, dynamic>> resultIterable =
+        resultList.map((Result result) {
+      return result.toMap();
+    });
+    return resultIterable.toList();
   }
 
   Future<String> getApplicationPath() async {
     final documentDirectory = await getApplicationDocumentsDirectory();
     return documentDirectory.path;
+  }
+
+  String getParsedDate(DateTime saveTime) {
+    String y = '${saveTime.year}';
+    String m = '${saveTime.month}';
+    String d = '${saveTime.day}';
+    String h = '${saveTime.hour}';
+    String min = '${saveTime.minute}';
+
+    return "$y-$m-$d $h:$min";
   }
 }

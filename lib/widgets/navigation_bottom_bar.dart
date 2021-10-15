@@ -17,7 +17,7 @@ class NavigationBottomBar extends StatelessWidget {
       //fixedColor: const Color.fromRGBO(20, 152, 77, 1.0),
       selectedItemColor: getIconColor(currentIndex),
       onTap: (index) {
-        if (index == currentIndex && index != 1) {
+        if (index == currentIndex) {
           return;
         }
         String _nextPage;
@@ -26,8 +26,6 @@ class NavigationBottomBar extends StatelessWidget {
             _nextPage = 'homeScreen';
             break;
           case 1:
-            Provider.of<ResultProvider>(context, listen: false)
-                .saveNewTakenImage();
             _nextPage = 'resultScreen';
             break;
           case 2:
@@ -42,18 +40,18 @@ class NavigationBottomBar extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(
           icon: Icon(
-            Icons.library_add_check_rounded,
+            Icons.library_books,
           ),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.cloud_upload_outlined),
+          icon: Icon(Icons.list_alt),
           label: 'Tomar foto',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.info),
-          label: 'Informacion',
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.info),
+        //   label: 'Informacion',
+        // ),
       ],
     );
   }
@@ -63,7 +61,7 @@ class NavigationBottomBar extends StatelessWidget {
       case 0:
         return Colors.brown;
       case 1:
-        return const Color.fromRGBO(20, 152, 77, 1.0);
+        return Colors.yellow.shade700;
       case 2:
         return Colors.yellow.shade600;
     }

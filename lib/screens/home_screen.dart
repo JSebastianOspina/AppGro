@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:appgro/models/result_model.dart';
 import 'package:appgro/providers/result_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
@@ -14,6 +15,15 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
         bottomNavigationBar: const NavigationBottomBar(0),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color.fromRGBO(20, 152, 77, 1.0),
+          child: const Icon(Icons.upload_file_outlined, color: Colors.white),
+          onPressed: () {
+            resultProvider.saveNewTakenImage();
+            Navigator.of(context).pushNamed('resultScreen');
+          },
+        ),
         body: ScreenWrapper(
           headerColor: Colors.brown,
           headerWidget: HeaderText(resultProvider: resultProvider),
@@ -77,7 +87,7 @@ class ListaTarjetas extends StatelessWidget {
 
 class ResultCard extends StatelessWidget {
   final int index;
-  final Map individualResult;
+  final Result individualResult;
   final ResultProvider resultProvider;
 
   const ResultCard(
@@ -102,7 +112,7 @@ class ResultCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.file(
-                File(individualResult['filePath']),
+                File(individualResult.filePath),
                 height: 80.0,
                 width: MediaQuery.of(context).size.width * 0.35,
                 fit: BoxFit.fill,
@@ -112,10 +122,10 @@ class ResultCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    'GGA: ${double.parse(individualResult['gga'].toStringAsFixed(2))}%'),
+                    'GGA: ${double.parse(individualResult.gga.toStringAsFixed(2))}%'),
                 Text(
-                    'GA: ${double.parse(individualResult['ga'].toStringAsFixed(2))}%'),
-                Text('${individualResult['date']}'),
+                    'GA: ${double.parse(individualResult.ga.toStringAsFixed(2))}%'),
+                Text(individualResult.date),
               ],
             ),
             IconButton(

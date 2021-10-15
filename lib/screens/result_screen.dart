@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:appgro/models/result_model.dart';
 import 'package:appgro/providers/result_provider.dart';
 import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
@@ -15,6 +16,16 @@ class ResultScreen extends StatelessWidget {
     final resultProvider = Provider.of<ResultProvider>(context, listen: true);
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        elevation: 4,
+        backgroundColor: const Color.fromRGBO(20, 152, 77, 1.0),
+        child: const Icon(Icons.upload_file_outlined, color: Colors.white),
+        onPressed: () {
+          resultProvider.saveNewTakenImage();
+          Navigator.of(context).pushNamed('resultScreen');
+        },
+      ),
       bottomNavigationBar: const NavigationBottomBar(1),
       body: ResultBody(resultProvider: resultProvider),
     );
@@ -24,10 +35,9 @@ class ResultScreen extends StatelessWidget {
 class ResultBody extends StatelessWidget {
   const ResultBody({Key? key, required this.resultProvider}) : super(key: key);
   final ResultProvider resultProvider;
-
   @override
   Widget build(BuildContext context) {
-    const Color _primaryColor = Color.fromRGBO(20, 152, 77, 1.0);
+    Color _primaryColor = Colors.yellow.shade700;
 
     if (resultProvider.isLoading) {
       return Center(
@@ -60,11 +70,33 @@ class ResultBody extends StatelessWidget {
         ],
       ));
     } else {
-      double gga = resultProvider.result!.gga;
+      Result? result = resultProvider.result;
+      if (resultProvider.results.isEmpty) {
+        return Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('No existen resultados en memoria.'),
+            const SizedBox(height: 5.0),
+            const Text('Por favor, analiza tu primer imagen'),
+            TextButton(
+              onPressed: () {
+                resultProvider.saveNewTakenImage();
+              },
+              child: const Text('Analizar imagen'),
+            )
+          ],
+        ));
+      }
+      if (result == null) {
+        result = resultProvider.lastResult;
+      }
+
+      double gga = result!.gga;
       gga = double.parse(gga.toStringAsFixed(2));
-      double ga = resultProvider.result!.ga;
+      double ga = result.ga;
       ga = double.parse(ga.toStringAsFixed(2));
-      final String imagePath = resultProvider.result!.filepath;
+      final String imagePath = result.filePath;
       return ScreenWrapper(
         headerColor: _primaryColor,
         headerWidget: Column(
@@ -104,7 +136,7 @@ class ResultBody extends StatelessWidget {
               const SizedBox(
                 height: 15.0,
               ),
-              const Divider(
+              Divider(
                 height: 15,
                 color: _primaryColor,
                 thickness: 0.8,
