@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:appgro/providers/result_provider.dart';
@@ -6,7 +5,6 @@ import 'package:appgro/widgets/navigation_bottom_bar.dart';
 import 'package:appgro/widgets/screen_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {

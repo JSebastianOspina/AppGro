@@ -1,11 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:appgro/providers/indexes_provider.dart';
+import 'package:appgro/providers/result_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class NavigationBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -31,6 +26,8 @@ class NavigationBottomBar extends StatelessWidget {
             _nextPage = 'homeScreen';
             break;
           case 1:
+            Provider.of<ResultProvider>(context, listen: false)
+                .saveNewTakenImage();
             _nextPage = 'resultScreen';
             break;
           case 2:
