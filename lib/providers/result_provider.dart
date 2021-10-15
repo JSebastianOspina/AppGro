@@ -77,8 +77,14 @@ class ResultProvider extends ChangeNotifier {
     );
 
     //Starts a new processor that gets the compressed image Ga and GGA
-    final gga = await compute(getGGA, compressedImage);
-    final ga = await compute(getGA, compressedImage);
+    // final gga = await compute(getGGA, compressedImage);
+    // final ga = await compute(getGA, compressedImage);
+
+    final ggaAndGa = await Future.wait(
+        [compute(getGGA, compressedImage), compute(getGA, compressedImage)]);
+    final gga = ggaAndGa[0];
+    final ga = ggaAndGa[1];
+
     final date = DateTime.now();
     final dateAsString = getParsedDate(date);
     //At this poing, we got all the variables we need for saving
