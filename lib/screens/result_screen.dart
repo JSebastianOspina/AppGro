@@ -75,16 +75,10 @@ class ResultBody extends StatelessWidget {
         return Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No existen resultados en memoria.'),
-            const SizedBox(height: 5.0),
-            const Text('Por favor, analiza tu primer imagen'),
-            TextButton(
-              onPressed: () {
-                resultProvider.saveNewTakenImage();
-              },
-              child: const Text('Analizar imagen'),
-            )
+          children: const [
+            Text('No existen resultados en memoria.'),
+            SizedBox(height: 5.0),
+            Text('Por favor, analiza tu primer imagen'),
           ],
         ));
       }

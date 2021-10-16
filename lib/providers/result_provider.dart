@@ -22,7 +22,10 @@ class ResultProvider extends ChangeNotifier {
     loadResults();
   }
   set result(Result? result) {
+    _isLoading = false;
+    _wasCanceled = false;
     _actualResult = result;
+    notifyListeners();
   }
 
   Result? get lastResult {
@@ -39,10 +42,6 @@ class ResultProvider extends ChangeNotifier {
 
   bool get wasCanceled {
     return _wasCanceled;
-  }
-
-  String _getNewImageName() {
-    return _results.isEmpty ? '1.jpg' : '${_results.length + 1}.jpg';
   }
 
   Future<Uint8List?> getUserImageAsUint8List() async {
@@ -96,7 +95,7 @@ class ResultProvider extends ChangeNotifier {
     //get the application path in order to save it.
     final applicationPath = await getApplicationPath();
     // Make the final image path
-    final String imageName = '$applicationPath/${_getNewImageName()}';
+    final String imageName = '$applicationPath/${date.toString()}.jpg';
     //Save compressed image to user device
     File(imageName).writeAsBytes(compressedImage);
     saveResult(applicationPath, imageName, ga, gga, dateAsString);

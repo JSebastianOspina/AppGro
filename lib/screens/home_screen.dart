@@ -118,12 +118,10 @@ class ResultCard extends StatelessWidget {
                 },
                 child: Hero(
                   tag: individualResult.filePath,
-                  child: Image.file(
-                    File(individualResult.filePath),
-                    height: 80.0,
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    fit: BoxFit.fill,
-                  ),
+                  child: Image.file(File(individualResult.filePath),
+                      height: 80.0,
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      fit: BoxFit.cover),
                 ),
               ),
             ),
