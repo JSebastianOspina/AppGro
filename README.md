@@ -13,6 +13,7 @@ Native File system was used for storing indexes's results.
 ## How to implement this project
 
 1. Clone this git to any folder you want.
-2. Run `flutter pub get` in order to download all the pubspec.yaml required dependences.
+2. Run `flutter pub get` on your terminal, in order to download all the pubspec.yaml required dependences.
 3. Select a device and run flutter project.
-   Optional: If you want to generate the non-debug apk, run `flutter build apk` command on your terminal.
+
+**Optional:** If you want to generate the non-debug apk, run `flutter build apk` on your terminal.
