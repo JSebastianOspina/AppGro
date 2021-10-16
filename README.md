@@ -8,7 +8,7 @@ Native File system was used for storing indexes's results.
 
 ## If a picture is worth a thousand words, imagine a video
 
-![](https://im2.ezgif.com/tmp/ezgif-2-67691118e3a1.gif)
+![demostracion](https://user-images.githubusercontent.com/55632072/137569460-72c1a003-ea6b-42f8-8b82-6d75a0e725ab.gif)
 
 ## How to implement this project
 
