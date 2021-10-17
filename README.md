@@ -1,4 +1,4 @@
-# AppGro - Real Time GGA and GA image calculator
+# AppGro - Realtime GGA and GA image calculator
 
 This project was made 100% in Flutter and Dart. No external dependencies were used to calculate the vegetation indexes. This were calculated based on J. Casadesús's studies.
 
